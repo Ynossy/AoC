@@ -25,8 +25,6 @@ print(
 # %% part 2
 
 for pivot in range(expense.shape[0] - 1):
-    low = 0
-    high = pivot - 1
     low, high = search(expense, pivot + 1, expense.shape[0] - 1, 2020 - expense[pivot])
 
     if expense[low] + expense[high] + expense[pivot] == 2020:
