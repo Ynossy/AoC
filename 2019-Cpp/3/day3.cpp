@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
-#include <set>
+#include <map>
 #include <math.h>
 
 void getCommands(std::vector<std::tuple<char, int>> *commands, std::string input)
@@ -21,9 +21,10 @@ void getCommands(std::vector<std::tuple<char, int>> *commands, std::string input
     }
 }
 
-void insertLine(std::set<std::tuple<int, int>> *map, std::vector<std::tuple<char, int>> *commands)
+void insertLine(std::map<std::tuple<int, int>, int> *map, std::vector<std::tuple<char, int>> *commands)
 {
     int pos[2] = {0, 0};
+    int delay = 0;
     for (std::tuple<char, int> cmd : *commands)
     {
         int dir[2] = {0, 0};
@@ -48,9 +49,10 @@ void insertLine(std::set<std::tuple<int, int>> *map, std::vector<std::tuple<char
         // work in progress
         for (int i = 0; i < dist; i++)
         {
+            delay += 1;
             pos[0] += dir[0];
             pos[1] += dir[1];
-            auto res = map->emplace(std::make_tuple(pos[0], pos[1]));
+            auto res = map->emplace(std::make_tuple(pos[0], pos[1]), delay);
         }
     }
 }
@@ -75,28 +77,36 @@ int main()
     getCommands(&commands1, line1);
     getCommands(&commands2, line2);
 
-    // walk over all positions and insert in a set each
-    std::set<std::tuple<int, int>> map1;
-    std::set<std::tuple<int, int>> map2;
+    // walk over all positions and insert in a map each
+    std::map<std::tuple<int, int>, int> map1;
+    std::map<std::tuple<int, int>, int> map2;
     insertLine(&map1, &commands1);
     insertLine(&map2, &commands2);
 
     // merge both sets (avoids collisions between the same line)
     int min_hattan = INT_MAX;
+    int min_delay = INT_MAX;
     for (auto p : map1)
     {
         auto res = map2.emplace(p);
         if (!res.second)
         {
-            int d = std::abs(std::get<0>(*res.first)) + std::abs(std::get<1>(*res.first));
+            auto tuple = *res.first;
+            int dist = tuple.second + p.second;
+            int d = std::abs(std::get<0>(tuple.first)) + std::abs(std::get<1>(tuple.first));
             if (d < min_hattan)
             {
                 min_hattan = d;
-                std::cout << d << "\n";
+                // std::cout << d << "\n";
+            }
+            if (dist < min_delay)
+            {
+                min_delay = dist;
             }
         }
     }
     std::cout << "Smallest Distance: " << min_hattan;
+    std::cout << ", Smallest delay: " << min_delay;
 
     return 0;
 }
