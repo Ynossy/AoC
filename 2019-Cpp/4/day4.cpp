@@ -4,6 +4,13 @@
 #define range_L 245318
 #define range_H 765747
 
+void count_up(int digits[], int idx){
+    digits[idx] += 1;
+    if(digits[idx]>9){
+        digits[idx] = 0;
+        count_up(digits, idx - 1);
+    }
+}
 /**
  * @brief check conditions for part 1 or 2
  *
@@ -12,29 +19,22 @@
  */
 int check_condiitons(int part)
 {
-    int digits[6] = {0, 0, 0, 0, 0, 0};
+    int digits[6] = {2, 4, 5, 3, 1, 8};
 
     int counter = 0;
     for (int i = range_L; i <= range_H; i++)
     {
-        int n = i;
-        int div = 100000;
-        for (int d = 5; d >= 0; d--)
-        {
-            digits[d] = n / div;
-            n -= digits[d] * div;
-            div /= 10;
-        }
+        count_up(digits, 5);
         bool not_dec = true;
         bool same_dig = false;
         int dig_c[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        for (int d = 5; d > 0; d--)
+        for (int d = 0; d < 5; d++)
         {
-            if (digits[d] > digits[d - 1])
+            if (digits[d] > digits[d + 1])
             {
                 not_dec = false;
             }
-            if (digits[d] == digits[d - 1])
+            if (digits[d] == digits[d + 1])
             {
                 dig_c[digits[d]] += 1;
             }
