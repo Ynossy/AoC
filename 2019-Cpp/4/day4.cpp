@@ -4,9 +4,11 @@
 #define range_L 245318
 #define range_H 765747
 
-void count_up(int digits[], int idx){
+void count_up(int digits[], int idx)
+{
     digits[idx] += 1;
-    if(digits[idx]>9){
+    if (digits[idx] > 9)
+    {
         digits[idx] = 0;
         count_up(digits, idx - 1);
     }
@@ -33,18 +35,20 @@ int check_condiitons(int part)
             if (digits[d] > digits[d + 1])
             {
                 not_dec = false;
+                break;
             }
             if (digits[d] == digits[d + 1])
             {
                 dig_c[digits[d]] += 1;
             }
-        }
-        for (int i : dig_c)
-        {
-            if (part == 2 && i == 1)
-                same_dig = true;
-            else if (part == 1 && i > 0)
-                same_dig = true;
+            if (d == 4)
+                for (int i : dig_c)
+                {
+                    if (part == 2 && i == 1)
+                        same_dig = true;
+                    else if (part == 1 && i > 0)
+                        same_dig = true;
+                }
         }
         if (not_dec && same_dig)
         {
@@ -56,15 +60,15 @@ int check_condiitons(int part)
 
 int main()
 {
-    auto t1 =std::chrono::high_resolution_clock::now();
+    auto t1 = std::chrono::high_resolution_clock::now();
     int c1 = check_condiitons(1);
     int c2 = check_condiitons(2);
-    auto t2 =std::chrono::high_resolution_clock::now();
-    auto ms_int = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto ms_int = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1);
 
     std::cout << "Matching Numbers Part1: " << c1 << "\n";
     std::cout << "Matching Numbers Part2: " << c2 << "\n";
 
-    std::cout << "Runtime: " << ms_int.count() << "ms";
+    std::cout << "Runtime: " << ms_int.count() << "us";
     return 0;
 }
