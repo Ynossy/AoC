@@ -6,7 +6,6 @@
 
 /**
  * @brief parse integer ABCDE into [DE, C, B, A]
- *
  */
 void parse_inst(int instr, int op_array[])
 {
@@ -23,9 +22,10 @@ int main()
     // input container
     std::vector<int> input;
 
+    // ----------------------------------------------
+    // Parse input to vector
     std::string line;
     std::getline(inputFile, line);
-
     std::stringstream ss(line);
     int val;
     while (ss >> val)
@@ -36,7 +36,8 @@ int main()
     }
     inputFile.close();
 
-    // Part 1
+    // ----------------------------------------------
+    // Intcode Computer
     int idx = 0;
     int op_array[4];
     parse_inst(input[idx++], op_array);
@@ -76,18 +77,21 @@ int main()
         }
         else if (op_array[0] == 5)
         {
+            // Jump if true
             int op1 = op_array[1] ? input[idx++] : input[input[idx++]];
             int op2 = op_array[2] ? input[idx++] : input[input[idx++]];
             idx = op1 ? op2 : idx;
         }
         else if (op_array[0] == 6)
         {
+            // Jump if false
             int op1 = op_array[1] ? input[idx++] : input[input[idx++]];
             int op2 = op_array[2] ? input[idx++] : input[input[idx++]];
             idx = op1 ? idx : op2;
         }
         else if (op_array[0] == 7)
         {
+            // less than
             int op1 = op_array[1] ? input[idx++] : input[input[idx++]];
             int op2 = op_array[2] ? input[idx++] : input[input[idx++]];
             int out = input[idx++];
@@ -95,6 +99,7 @@ int main()
         }
         else if (op_array[0] == 8)
         {
+            // equal
             int op1 = op_array[1] ? input[idx++] : input[input[idx++]];
             int op2 = op_array[2] ? input[idx++] : input[input[idx++]];
             int out = input[idx++];
