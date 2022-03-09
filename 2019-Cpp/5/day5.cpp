@@ -62,7 +62,7 @@ int main()
         else if (op_array[0] == 3)
         {
             // Input
-            std::cout << "Input Number: (1 for part I, 5 for part II";
+            std::cout << "Input Number: (1 for part I, 5 for part II) \n";
             int manual_input;
             std::cin >> manual_input;
             int out = input[idx++];
