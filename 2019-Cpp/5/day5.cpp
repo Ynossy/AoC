@@ -62,7 +62,7 @@ int main()
         else if (op_array[0] == 3)
         {
             // Input
-            std::cout << "Input Number: ";
+            std::cout << "Input Number: (1 for part I, 5 for part II";
             int manual_input;
             std::cin >> manual_input;
             int out = input[idx++];
@@ -73,6 +73,32 @@ int main()
             // Output
             int out = op_array[1] ? input[idx++] : input[input[idx++]];
             std::cout << "Instruction Output: " << out << "\n";
+        }
+        else if (op_array[0] == 5)
+        {
+            int op1 = op_array[1] ? input[idx++] : input[input[idx++]];
+            int op2 = op_array[2] ? input[idx++] : input[input[idx++]];
+            idx = op1 ? op2 : idx;
+        }
+        else if (op_array[0] == 6)
+        {
+            int op1 = op_array[1] ? input[idx++] : input[input[idx++]];
+            int op2 = op_array[2] ? input[idx++] : input[input[idx++]];
+            idx = op1 ? idx : op2;
+        }
+        else if (op_array[0] == 7)
+        {
+            int op1 = op_array[1] ? input[idx++] : input[input[idx++]];
+            int op2 = op_array[2] ? input[idx++] : input[input[idx++]];
+            int out = input[idx++];
+            input[out] = op1 < op2;
+        }
+        else if (op_array[0] == 8)
+        {
+            int op1 = op_array[1] ? input[idx++] : input[input[idx++]];
+            int op2 = op_array[2] ? input[idx++] : input[input[idx++]];
+            int out = input[idx++];
+            input[out] = op1 == op2;
         }
         else
         {
