@@ -1,4 +1,3 @@
-#include <sstream>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -30,8 +29,7 @@ void populate_map(std::unordered_map<std::string, Node> &nodes)
         auto c_node = nodes.find(child);
         if (c_node == nodes.end())
         {
-            std::vector<std::string> childs;
-            Node node = {parent, childs};
+            Node node = {parent, std::vector<std::string>{}};
             nodes.emplace(child, node);
         }
         else if (!c_node->second.parent.compare("0"))
@@ -42,9 +40,7 @@ void populate_map(std::unordered_map<std::string, Node> &nodes)
         auto p_node = nodes.find(parent);
         if (p_node == nodes.end())
         {
-            std::vector<std::string> childs;
-            childs.push_back(child);
-            Node node = {"0", childs};
+            Node node = {"0", std::vector<std::string>{child}};
             nodes.emplace(parent, node);
         }
         else
