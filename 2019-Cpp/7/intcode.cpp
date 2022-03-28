@@ -16,7 +16,18 @@ public:
     {
         i_idx = 0;
     }
+    IntCode(std::vector<int> code_array)
+        : code_array(code_array)
+    {
+    }
     int run();
+
+    void set_input(int *input_array, int input_array_len)
+    {
+        this->input_array = input_array;
+        this->input_array_len = input_array_len;
+        this->i_idx = 0;
+    }
 
 private:
     std::vector<int> code_array;
@@ -120,6 +131,6 @@ int IntCode::run()
         }
         parse_inst(code_array[idx++], op_array);
     }
-    std::cout << "Incode ran without Output!\n";
-    return 0;
+    std::cout << "Intcode ran without Output!\n";
+    return -2;
 }
