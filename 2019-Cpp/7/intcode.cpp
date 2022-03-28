@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <deque>
 
 class IntCode
 {
@@ -8,15 +9,7 @@ public:
      * @brief Construct a new Int Code object
      *
      * @param code_array vector containing the initial state
-     * @param input_array all inputs, given sequentially
-     * @param input_array_len amount of inputs given
      */
-    IntCode(std::vector<int> code_array, int *input_array, int input_array_len)
-        : code_array(code_array), input_array(input_array), input_array_len(input_array_len)
-    {
-        i_idx = 0;
-        idx = 0;
-    }
     IntCode(std::vector<int> code_array)
         : code_array(code_array)
     {
@@ -24,18 +17,14 @@ public:
     }
     int run();
 
-    void set_input(int *input_array, int input_array_len)
+    void push_input(int inp)
     {
-        this->input_array = input_array;
-        this->input_array_len = input_array_len;
-        this->i_idx = 0;
+        inputs.push_back(inp);
     }
 
 private:
     std::vector<int> code_array;
-    int *input_array;
-    int input_array_len;
-    int i_idx;
+    std::deque<int> inputs;
     int idx; //current programm state
     /**
      * @brief parse integer ABCDE into [DE, C, B, A]
@@ -79,10 +68,11 @@ int IntCode::run()
             // int manual_input;
             // std::cin >> manual_input;
             int out = code_array[idx++];
-            if (i_idx < input_array_len)
+            if (inputs.size())
             {
                 // std::cout << "Input: " << input_array[i_idx] << "\n";
-                code_array[out] = input_array[i_idx++];
+                code_array[out] = inputs.front();
+                inputs.pop_front();
             }
             else
             {

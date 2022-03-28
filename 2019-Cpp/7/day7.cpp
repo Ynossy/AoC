@@ -12,8 +12,10 @@ int run_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
     for (int i = 0; i < 5; i++)
     {
         int in_a[] = {phase_settings[i], amp_out};
-        IntCode Amp = IntCode(input, in_a, 2);
-        amp_out = Amp.run();
+        IntCode amp = IntCode(input);
+        amp.push_input(phase_settings[i]);
+        amp.push_input(amp_out);
+        amp_out = amp.run();
     }
     // std::cout << "Amplifier Output: " << amp_out << "\n";
     return amp_out;
@@ -23,43 +25,19 @@ int loop_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
 {
     int amp_out = 0;
     int amp_E = 0;
-    IntCode AmpA = IntCode(input);
-    IntCode AmpB = IntCode(input);
-    IntCode AmpC = IntCode(input);
-    IntCode AmpD = IntCode(input);
-    IntCode AmpE = IntCode(input);
-    int in_a[] = {phase_settings[0], amp_out};
-    AmpA.set_input(in_a, 2);
-    amp_out = AmpA.run();
-    int in_b[] = {phase_settings[1], amp_out};
-    AmpB.set_input(in_b, 2);
-    amp_out = AmpB.run();
-    int in_c[] = {phase_settings[2], amp_out};
-    AmpC.set_input(in_c, 2);
-    amp_out = AmpC.run();
-    int in_d[] = {phase_settings[3], amp_out};
-    AmpD.set_input(in_d, 2);
-    amp_out = AmpD.run();
-    int in_e[] = {phase_settings[4], amp_out};
-    AmpE.set_input(in_e, 2);
-    amp_out = AmpE.run();
+    std::vector<IntCode> amps;
+    for (int i = 0; i < 5; i++)
+    {
+        amps.push_back(IntCode(input));
+        amps[i].push_input(phase_settings[i]);
+    }
     for (int i = 0; i < 1000; i++)
     {
-        int in_a[] = {amp_out};
-        AmpA.set_input(in_a, 1);
-        amp_out = AmpA.run();
-        int in_b[] = {amp_out};
-        AmpB.set_input(in_b, 1);
-        amp_out = AmpB.run();
-        int in_c[] = {amp_out};
-        AmpC.set_input(in_c, 1);
-        amp_out = AmpC.run();
-        int in_d[] = {amp_out};
-        AmpD.set_input(in_d, 1);
-        amp_out = AmpD.run();
-        int in_e[] = {amp_out};
-        AmpE.set_input(in_e, 1);
-        amp_out = AmpE.run();
+        for (IntCode &amp: amps)
+        {
+            amp.push_input(amp_out);
+            amp_out = amp.run();
+        }
 
         if (amp_out == -2)
         {
