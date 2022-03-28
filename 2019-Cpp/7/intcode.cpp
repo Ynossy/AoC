@@ -15,10 +15,12 @@ public:
         : code_array(code_array), input_array(input_array), input_array_len(input_array_len)
     {
         i_idx = 0;
+        idx = 0;
     }
     IntCode(std::vector<int> code_array)
         : code_array(code_array)
     {
+        idx = 0;
     }
     int run();
 
@@ -34,6 +36,7 @@ private:
     int *input_array;
     int input_array_len;
     int i_idx;
+    int idx; //current programm state
     /**
      * @brief parse integer ABCDE into [DE, C, B, A]
      */
@@ -48,7 +51,6 @@ private:
 
 int IntCode::run()
 {
-    int idx = 0;
     int op_array[4];
     parse_inst(code_array[idx++], op_array);
 
@@ -131,6 +133,6 @@ int IntCode::run()
         }
         parse_inst(code_array[idx++], op_array);
     }
-    std::cout << "Intcode ran without Output!\n";
+    // std::cout << "Intcode ran without Output!\n";
     return -2;
 }

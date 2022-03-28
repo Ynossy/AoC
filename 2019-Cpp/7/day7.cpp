@@ -27,28 +27,43 @@ int loop_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
     IntCode AmpC = IntCode(input);
     IntCode AmpD = IntCode(input);
     IntCode AmpE = IntCode(input);
+    int in_a[] = {phase_settings[0], amp_out};
+    AmpA.set_input(in_a, 2);
+    amp_out = AmpA.run();
+    int in_b[] = {phase_settings[1], amp_out};
+    AmpB.set_input(in_b, 2);
+    amp_out = AmpB.run();
+    int in_c[] = {phase_settings[2], amp_out};
+    AmpC.set_input(in_c, 2);
+    amp_out = AmpC.run();
+    int in_d[] = {phase_settings[3], amp_out};
+    AmpD.set_input(in_d, 2);
+    amp_out = AmpD.run();
+    int in_e[] = {phase_settings[4], amp_out};
+    AmpE.set_input(in_e, 2);
+    amp_out = AmpE.run();
     for (int i = 0; i < 1000; i++)
     {
         // TODO: only imput phase the first time, then only signal
-        int in_a[] = {phase_settings[0], amp_out};
-        AmpA.set_input(in_a, 2);
+        int in_a[] = {amp_out};
+        AmpA.set_input(in_a, 1);
         amp_out = AmpA.run();
-        int in_b[] = {phase_settings[1], amp_out};
-        AmpB.set_input(in_b, 2);
+        int in_b[] = {amp_out};
+        AmpB.set_input(in_b, 1);
         amp_out = AmpB.run();
-        int in_c[] = {phase_settings[2], amp_out};
-        AmpC.set_input(in_c, 2);
+        int in_c[] = {amp_out};
+        AmpC.set_input(in_c, 1);
         amp_out = AmpC.run();
-        int in_d[] = {phase_settings[3], amp_out};
-        AmpD.set_input(in_d, 2);
+        int in_d[] = {amp_out};
+        AmpD.set_input(in_d, 1);
         amp_out = AmpD.run();
-        int in_e[] = {phase_settings[4], amp_out};
-        AmpE.set_input(in_e, 2);
+        int in_e[] = {amp_out};
+        AmpE.set_input(in_e, 1);
         amp_out = AmpE.run();
 
         if (amp_out == -2)
         {
-            std::cout << "Loops: " << i << "\n";
+            // std::cout << "Loops: " << i << "\n";
             break;
         }
         amp_E = amp_out;
@@ -131,15 +146,14 @@ void part2(std::vector<int> &input)
             }
         }
     }
-    // 977932 too high
-    // 212460 Right
+    // 21844737
     std::cout << "P2 - Max Output: " << max;
 }
 
 int main()
 {
-    // std::ifstream inputFile("../7/input.txt");
-    std::ifstream inputFile("../7/example.txt");
+    std::ifstream inputFile("../7/input.txt");
+    // std::ifstream inputFile("../7/example.txt");
 
     // input container
     std::vector<int> input;
