@@ -11,7 +11,6 @@ int run_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
     int amp_out = 0;
     for (int i = 0; i < 5; i++)
     {
-        int in_a[] = {phase_settings[i], amp_out};
         IntCode amp = IntCode(input);
         amp.push_input(phase_settings[i]);
         amp.push_input(amp_out);
@@ -31,20 +30,14 @@ int loop_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
         amps.push_back(IntCode(input));
         amps[i].push_input(phase_settings[i]);
     }
-    for (int i = 0; i < 1000; i++)
+    while(amp_out != -2)
     {
+        amp_E = amp_out;
         for (IntCode &amp: amps)
         {
             amp.push_input(amp_out);
             amp_out = amp.run();
         }
-
-        if (amp_out == -2)
-        {
-            // std::cout << "Loops: " << i << "\n";
-            break;
-        }
-        amp_E = amp_out;
     }
     return amp_E;
 }
