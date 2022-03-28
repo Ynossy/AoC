@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 #include "intcode.cpp"
 
 int run_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
@@ -70,54 +71,21 @@ int loop_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
     return amp_E;
 }
 
-int brute_force_phase(int part, std::vector<int> &input)
-{
-    int offset = (part == 2) ? 5 : 0;
-    std::vector<int> phase_settings;
-    int max = 0;
-    for (int i = offset; i < offset + 5; i++)
-    {
-        for (int j = offset; j < offset + 5; j++)
-        {
-            if (j == i)
-                continue;
-            for (int k = offset; k < offset + 5; k++)
-            {
-                if (k == i || k == j)
-                    continue;
-                for (int l = offset; l < offset + 5; l++)
-                {
-                    if (l == i || l == j || l == k)
-                        continue;
-                    for (int m = offset; m < offset + 5; m++)
-                    {
-                        if (m == i || m == j || m == k || m == l)
-                            continue;
-                        phase_settings = {i, j, k, l, m};
-                        int amp_out;
-                        if (part == 1)
-                        {
-                            amp_out = run_amplifiers(input, phase_settings);
-                        }
-                        else if (part == 2)
-                        {
-                            amp_out = loop_amplifiers(input, phase_settings);
-                        }
-                        if (amp_out > max)
-                        {
-                            max = amp_out;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return max;
-}
-
 void part1(std::vector<int> &input)
 {
-    int max = brute_force_phase(1, input);
+    std::vector<int> phase_settings;
+    phase_settings = {0, 1, 2, 3, 4};
+
+    int max = 0;
+    while (std::next_permutation(phase_settings.begin(), phase_settings.end()))
+    {
+        int amp_out;
+        amp_out = run_amplifiers(input, phase_settings);
+        if (amp_out > max)
+        {
+            max = amp_out;
+        }
+    }
     // 977932 too high
     // 212460 Right
     std::cout << "P1 - Max Output: " << max << "\n";
@@ -125,7 +93,19 @@ void part1(std::vector<int> &input)
 
 void part2(std::vector<int> &input)
 {
-    int max = brute_force_phase(2, input);
+    std::vector<int> phase_settings;
+    phase_settings = {5, 6, 7, 8, 9};
+
+    int max = 0;
+    while (std::next_permutation(phase_settings.begin(), phase_settings.end()))
+    {
+        int amp_out;
+        amp_out = loop_amplifiers(input, phase_settings);
+        if (amp_out > max)
+        {
+            max = amp_out;
+        }
+    }
     // 21844737
     std::cout << "P2 - Max Output: " << max;
 }
