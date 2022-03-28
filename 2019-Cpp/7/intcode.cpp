@@ -81,7 +81,7 @@ int IntCode::run()
         {
             // Output
             int out = op_array[1] ? code_array[idx++] : code_array[code_array[idx++]];
-            std::cout << "Instruction Output: " << out << "\n";
+            // std::cout << "Instruction Output: " << out << "\n";
             return out;
         }
         else if (op_array[0] == 5)
