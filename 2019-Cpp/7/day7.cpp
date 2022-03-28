@@ -10,7 +10,7 @@ int run_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
     int amp_out = 0;
     for (int i = 0; i < 5; i++)
     {
-        int in_a[] = {phase_settings[i], amp_out}; //{amp_out, phase_settings[i]};
+        int in_a[] = {phase_settings[i], amp_out};
         IntCode Amp = IntCode(input, in_a, 2);
         amp_out = Amp.run();
     }
@@ -44,7 +44,6 @@ int loop_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
     amp_out = AmpE.run();
     for (int i = 0; i < 1000; i++)
     {
-        // TODO: only imput phase the first time, then only signal
         int in_a[] = {amp_out};
         AmpA.set_input(in_a, 1);
         amp_out = AmpA.run();
@@ -71,32 +70,39 @@ int loop_amplifiers(std::vector<int> &input, std::vector<int> &phase_settings)
     return amp_E;
 }
 
-void part1(std::vector<int> &input)
+int brute_force_phase(int part, std::vector<int> &input)
 {
-    std::vector<int> phase_settings; // = {1, 0, 4, 3, 2};
+    int offset = (part == 2) ? 5 : 0;
+    std::vector<int> phase_settings;
     int max = 0;
-    for (int i = 0; i < 5; i++)
+    for (int i = offset; i < offset + 5; i++)
     {
-        for (int j = 0; j < 5; j++)
+        for (int j = offset; j < offset + 5; j++)
         {
             if (j == i)
                 continue;
-            for (int k = 0; k < 5; k++)
+            for (int k = offset; k < offset + 5; k++)
             {
                 if (k == i || k == j)
                     continue;
-                for (int l = 0; l < 5; l++)
+                for (int l = offset; l < offset + 5; l++)
                 {
                     if (l == i || l == j || l == k)
                         continue;
-                    for (int m = 0; m < 5; m++)
+                    for (int m = offset; m < offset + 5; m++)
                     {
                         if (m == i || m == j || m == k || m == l)
                             continue;
                         phase_settings = {i, j, k, l, m};
-
-                        // std::cout << i << " " << j << " " << k << " " << l << " " << m << "\n";
-                        int amp_out = run_amplifiers(input, phase_settings);
+                        int amp_out;
+                        if (part == 1)
+                        {
+                            amp_out = run_amplifiers(input, phase_settings);
+                        }
+                        else if (part == 2)
+                        {
+                            amp_out = loop_amplifiers(input, phase_settings);
+                        }
                         if (amp_out > max)
                         {
                             max = amp_out;
@@ -106,6 +112,12 @@ void part1(std::vector<int> &input)
             }
         }
     }
+    return max;
+}
+
+void part1(std::vector<int> &input)
+{
+    int max = brute_force_phase(1, input);
     // 977932 too high
     // 212460 Right
     std::cout << "P1 - Max Output: " << max << "\n";
@@ -113,39 +125,7 @@ void part1(std::vector<int> &input)
 
 void part2(std::vector<int> &input)
 {
-    std::vector<int> phase_settings; // = {1, 0, 4, 3, 2};
-    int max = 0;
-    for (int i = 5; i < 10; i++)
-    {
-        for (int j = 5; j < 10; j++)
-        {
-            if (j == i)
-                continue;
-            for (int k = 5; k < 10; k++)
-            {
-                if (k == i || k == j)
-                    continue;
-                for (int l = 5; l < 10; l++)
-                {
-                    if (l == i || l == j || l == k)
-                        continue;
-                    for (int m = 5; m < 10; m++)
-                    {
-                        if (m == i || m == j || m == k || m == l)
-                            continue;
-                        phase_settings = {i, j, k, l, m};
-
-                        // std::cout << i << " " << j << " " << k << " " << l << " " << m << "\n";
-                        int amp_out = loop_amplifiers(input, phase_settings);
-                        if (amp_out > max)
-                        {
-                            max = amp_out;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    int max = brute_force_phase(2, input);
     // 21844737
     std::cout << "P2 - Max Output: " << max;
 }
