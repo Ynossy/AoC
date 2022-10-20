@@ -1,12 +1,14 @@
+use core::num::dec2flt::number;
 use std::fs;
 
 fn main() {
     let path = "input.txt";
     let contents = fs::read_to_string(path).expect("Something went wrong reading the file");
-    part1(&contents);
+    let numbers = part1(&contents);
+    part2(&contents, &numbers);
 }
 
-fn part1(contents: &String) {
+fn part1(contents: &String) -> Vec<[i32; 26]> {
     let mut numbers = vec![[0; 26]; contents.len()];
     let mut two = 0;
     let mut three = 0;
@@ -36,4 +38,7 @@ fn part1(contents: &String) {
         three,
         two * three
     );
+    return numbers;
 }
+
+fn part2(contents: &String, numbers: Vec<[i32; 26]>) {}
