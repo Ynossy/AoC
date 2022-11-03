@@ -74,7 +74,7 @@ void task2(std::vector<int> input)
             }
             else
             {
-                std::cout << 'O';
+                std::cout << '#';
             }
         }
         std::cout << "\n";
