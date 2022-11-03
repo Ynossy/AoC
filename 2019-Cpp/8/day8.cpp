@@ -79,8 +79,6 @@ void task2(std::vector<int> input)
         }
         std::cout << "\n";
     }
-    for (int i : image)
-        std::cout << i;
 }
 
 int main()
