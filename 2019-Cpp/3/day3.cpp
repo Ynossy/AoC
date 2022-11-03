@@ -5,6 +5,7 @@
 #include <tuple>
 #include <map>
 #include <math.h>
+#include <climits>
 
 void getCommands(std::vector<std::tuple<char, int>> *commands, std::string input)
 {
