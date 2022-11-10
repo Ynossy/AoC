@@ -5,6 +5,15 @@
 #include <vector>
 #include <sstream>
 #include <tuple>
+#include <map>
+#include <cmath>
+
+typedef struct t_point
+{
+    int x;
+    int y;
+} t_point;
+
 /**
  * Greatest common divisor
  */
@@ -94,71 +103,72 @@ std::tuple<int, int> part1(std::vector<std::vector<int>> &input)
     return std::make_tuple(best_x, best_y);
 }
 
-int laser(std::vector<std::vector<int>> &input, int r, int c, int x, int y)
+void calculate_angles(std::vector<std::vector<int>> input, int r, int c, std::map<int, std::vector<t_point>, std::greater<int>> &laser_angles)
 {
-    if (gcd(abs(y), abs(x)) > 1) // skip direction xy
-        return 0;
-
-    int i = r + x;
-    int j = c + y;
-    while (0 <= i && i < input.size() && 0 <= j && j < input.at(0).size())
+    for (int i = 0; i < input.size(); i++)
     {
-        if (input.at(i).at(j))
+        for (int j = 0; j < input.at(0).size(); j++)
         {
-            input[i][j] = 0;
-            return 1;
+            if (!input.at(i).at(j))
+                continue;
+            int angle = atan2(j - c, i - r) * 1e8; // make a large integer for comparison
+            if (laser_angles.contains(angle))
+            {
+                laser_angles[angle].push_back({i, j});
+            }
+            else
+            {
+                std::vector<t_point> v = {t_point(i, j)};
+                laser_angles.insert(std::pair{angle, v});
+            }
         }
-        i += x;
-        j += y;
     }
-    return 0;
+}
+
+t_point get_closest_asteroid(int idx, std::vector<t_point> asteroid_list, int r, int c)
+{
+    int best_dist = INT16_MAX;
+    t_point best_p;
+    for (auto a : asteroid_list)
+    {
+        int dist = (a.x - r) * (a.x - r) + (a.y - c) * (a.y - c);
+        if (dist < best_dist)
+        {
+            best_dist = dist;
+            best_p = a;
+        }
+    }
+    // pop best point?
+    return best_p;
 }
 
 void part2(std::vector<std::vector<int>> input, int r, int c)
 {
-    for (int i = 0; i < input.size(); i++)
+    // solution 5 4 --> 504
+    /**
+     * Fill in every asteroid into a map (of lists) ordered by its angle to UP
+     * Read out the closest asteroid in descending order & stop a Nr 200
+     */
+    std::map<int, std::vector<t_point>, std::greater<int>> laser_angles;
+    calculate_angles(input, r, c, laser_angles);
+    int idx = 0;
+    for (auto asteroids : laser_angles)
     {
-        for (int j = 1; j < input.at(0).size(); j++)
+        t_point p = get_closest_asteroid(idx++, std::get<1>(asteroids), r, c);
+        // std::cout << idx << " -- " << p.y << " " << p.x << "\n";
+        if (idx == 200)
         {
-            if(laser(input, r, c, j, -i)){
-                
-            }
-        }
-    }
-    for (int i = 0; i < input.size(); i++)
-    {
-        for (int j = 1; j < input.at(0).size(); j++)
-        {
-            if(laser(input, r, c, -i, -j)){
-                
-            }
-        }
-    }
-    for (int i = 0; i < input.size(); i++)
-    {
-        for (int j = 1; j < input.at(0).size(); j++)
-        {
-            if(laser(input, r, c, -j, i)){
-                
-            }
-        }
-    }
-    for (int i = 0; i < input.size(); i++)
-    {
-        for (int j = 1; j < input.at(0).size(); j++)
-        {
-            if(laser(input, r, c, -j, i)){
-                
-            }
+            std::cout << "200st Asteroid: " << p.y << " " << p.x << "\n";
+            break;
         }
     }
 }
 
 int main()
 {
-    // std::ifstream inputFile("../10/input.txt");
+    std::ifstream inputFile("../10/input.txt");
     // std::ifstream inputFile("../10/example1.txt");
-    std::ifstream inputFile("../10/example2.txt");
+    // std::ifstream inputFile("../10/example2.txt");
 
     // input container
     std::vector<std::vector<int>> input;
