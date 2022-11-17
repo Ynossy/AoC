@@ -17,19 +17,14 @@ public:
     }
     long run();
 
-    /**
-     * @brief Puts an input to the queue that will get inserted while running
-     *
-     * @param inp
-     */
-    void push_input(long inp)
-    {
-        inputs.push_back(inp);
+    void set_joystick(int pos){
+        joystick = pos;
     }
 
 private:
     std::vector<long> code_array;
     std::deque<long> inputs;
+    long joystick = 0;
     long idx; // current programm state
     long relative_base; // relative base for mode 2
     /**
@@ -114,22 +109,9 @@ long IntCode::run()
         else if (op_array[0] == 3)
         {
             // Input
-            // std::cout << "Input Number: (1 for part I, 5 for part II) \n";
-            // long manual_input;
-            // std::cin >> manual_input;
             long out = write_argument(op_array[1]);
-            if (inputs.size())
-            {
-                // std::cout << "Input: " << input_array[i_idx] << "\n";
-                // code_array[out] = inputs.front();
-                write_to_memory(out, inputs.front());
-                inputs.pop_front();
-            }
-            else
-            {
-                std::cerr << "Run out of input values\n";
-                return -1;
-            }
+            write_to_memory(out, joystick);
+            inputs.pop_front();
         }
         else if (op_array[0] == 4)
         {
