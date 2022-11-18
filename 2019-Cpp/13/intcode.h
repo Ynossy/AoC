@@ -49,14 +49,14 @@ private:
      */
     long get_argument(long mode){
         if(mode == 0){
-            long i = code_array[idx++];
-            return code_array[i];
+            long i = code_array.at(idx++);
+            return code_array.at(i);
         } else if (mode == 1){
             long i = idx++;
-            return code_array[i];
+            return code_array.at(i);
         } else if (mode == 2){
-            long i = relative_base + code_array[idx++];
-            return code_array[i];
+            long i = relative_base + code_array.at(idx++);
+            return code_array.at(i);
         } else {
             std::cout << "Invalid Argument Mode: " << mode ;
             return -1;
@@ -65,9 +65,9 @@ private:
 
     long write_argument(long mode){
         if(mode == 0){
-            return code_array[idx++];
+            return code_array.at(idx++);
         } else if (mode == 2) {
-            return code_array[idx++] + relative_base;
+            return code_array.at(idx++) + relative_base;
         } else {
             std::cout << "Cannot write in immediate mode" << "\n";
             return -1;
@@ -78,14 +78,14 @@ private:
         while (code_array.size() < idx+1){
             code_array.push_back(0);
         }
-        code_array[idx] = value;
+        code_array.at(idx) = value;
     }
 };
 
 long IntCode::run()
 {
     long op_array[4];
-    parse_inst(code_array[idx++], op_array);
+    parse_inst(code_array.at(idx++), op_array);
     long output = -1;
 
     while (op_array[0] != 99)
@@ -110,8 +110,21 @@ long IntCode::run()
         {
             // Input
             long out = write_argument(op_array[1]);
+            // Input
+            // std::cout << "Input Joystick: (q left; w middle; e right) \n";
+            // char manual_input;
+            // std::cin >> manual_input;
+            // switch(manual_input){
+            //     case 'q':
+            //         joystick = -1;
+            //         break;
+            //     case 'e':
+            //         joystick = 1;
+            //         break;
+            //     default:
+            //         joystick = 0;
+            // }
             write_to_memory(out, joystick);
-            inputs.pop_front();
         }
         else if (op_array[0] == 4)
         {
@@ -158,7 +171,7 @@ long IntCode::run()
         {
             std::cerr << "Invalid Instruction: " << op_array[0] << "\n";
         }
-        parse_inst(code_array[idx++], op_array);
+        parse_inst(code_array.at(idx++), op_array);
     }
     // std::cout << "Intcode ran without Output!\n";
     return -99;
