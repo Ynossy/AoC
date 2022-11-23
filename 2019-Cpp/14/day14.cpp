@@ -35,45 +35,43 @@ int get_stock(std::unordered_map<std::string, Reaction> &reaction_list, const st
 
 void pop_stock(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, int amount)
 {
-    if (auto search = reaction_list.find(name); search != reaction_list.end())
-        search->second.stock -= amount;
-    else
-        std::cerr << "Element not found: " << name << "\n";
+    reaction_list[name].stock -= amount;
+    // if (auto search = reaction_list.find(name); search != reaction_list.end())
+    //     search->second.stock -= amount;
+    // else
+    //     std::cerr << "Element not found: " << name << "\n";
 }
 
 void add_stock(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, int amount)
 {
-    if (auto search = reaction_list.find(name); search != reaction_list.end())
-        search->second.stock += amount;
-    else
-        std::cerr << "Element not found: " << name << "\n";
+    reaction_list[name].stock += amount;
+    // if (auto search = reaction_list.find(name); search != reaction_list.end())
+    //     search->second.stock += amount;
+    // else
+    //     std::cerr << "Element not found: " << name << "\n";
 }
 
 int produce(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name)
 {
     int count = 0;
-    if (auto search = reaction_list.find(name); search != reaction_list.end())
+
+    auto &reaction = reaction_list[name];
+    
+    for (auto &i : reaction.ingredients)
     {
-        auto reaction = search->second;
-        for (auto i : reaction.ingredients)
+        if (i.name.compare("ORE") == 0)
         {
-            if (i.name.compare("ORE") == 0)
-            {
-                count += i.amount;
-                continue;
-            }
-            while (get_stock(reaction_list, i.name) < i.amount)
-            {
-                count += produce(reaction_list, i.name);
-            }
-            pop_stock(reaction_list, i.name, i.amount);
+            count += i.amount;
+            continue;
         }
-        add_stock(reaction_list, name, reaction.result.amount);
+        while (get_stock(reaction_list, i.name) < i.amount)
+        {
+            count += produce(reaction_list, i.name);
+        }
+        pop_stock(reaction_list, i.name, i.amount);
     }
-    else
-    {
-        std::cerr << "Element not found: " << name << "\n";
-    }
+    add_stock(reaction_list, name, reaction.result.amount);
+
     return count;
 }
 
@@ -82,6 +80,23 @@ void part1(std::unordered_map<std::string, Reaction> &reaction_list)
     // Result 337862
     int ores = produce(reaction_list, "FUEL");
     std::cout << "Ores needed: " << ores << "\n";
+}
+
+void part2(std::unordered_map<std::string, Reaction> &reaction_list)
+{
+    // takes forever
+    long ores = 1000000000000;
+    int fuel = 0;
+    while (ores > 0)
+    {
+        ores -= produce(reaction_list, "FUEL");
+        fuel++;
+        if (fuel % 1000 == 0)
+            std::cout << ores << "\n";
+    }
+    fuel -= 1;
+
+    std::cout << "Produced Amount of Fuel: " << fuel << "\n";
 }
 
 int main()
@@ -128,6 +143,7 @@ int main()
     inputFile.close();
 
     part1(reaction_list);
+    part2(reaction_list);
 
     return 0;
 }
