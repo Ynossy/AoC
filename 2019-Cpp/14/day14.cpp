@@ -14,16 +14,16 @@ typedef struct Ingredient
 
 typedef struct Reaction
 {
-    long stock = 0;
+    int64_t stock = 0;
     Ingredient result;
     std::vector<Ingredient> ingredients;
 } Reaction;
 
 
-long produce(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, long n)
+int64_t produce(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, int64_t n)
 {
     // std::cout << "1";
-    long count = 0;
+    int64_t count = 0;
 
     auto &reaction = reaction_list[name];
     
@@ -36,7 +36,7 @@ long produce(std::unordered_map<std::string, Reaction> &reaction_list, const std
         }
         while (reaction_list[i.name].stock < i.amount * n)
         {
-            long missing = fmax((i.amount * n -reaction_list[i.name].stock) / reaction_list[i.name].result.amount, 1);
+            int64_t missing = fmax((i.amount * n -reaction_list[i.name].stock) / reaction_list[i.name].result.amount, 1);
             count += produce(reaction_list, i.name, missing);
         }
         reaction_list[i.name].stock -= i.amount * n;
@@ -49,7 +49,7 @@ long produce(std::unordered_map<std::string, Reaction> &reaction_list, const std
 void part1(std::unordered_map<std::string, Reaction> reaction_list)
 {
     // Result 337862
-    long ores = produce(reaction_list, "FUEL", 1);
+    int64_t ores = produce(reaction_list, "FUEL", 1);
     std::cout << "Ores needed: " << ores << "\n";
 }
 
@@ -63,7 +63,7 @@ void part2(std::unordered_map<std::string, Reaction> reaction_list)
     
 
     // // takes forever
-    // long long ores = 1000000000000;
+    // int64_t ores = 1000000000000;
     // int fuel = 0;
     // while (ores > 0)
     // {
