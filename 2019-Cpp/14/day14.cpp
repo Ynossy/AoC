@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <math.h>
 
 typedef struct Ingredient
 {
@@ -13,47 +14,16 @@ typedef struct Ingredient
 
 typedef struct Reaction
 {
-    int stock = 0;
+    long stock = 0;
     Ingredient result;
     std::vector<Ingredient> ingredients;
 } Reaction;
 
-/**
- * TODO: Need to keep track of overproduced ores
- */
 
-int get_stock(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name)
+long produce(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, long n)
 {
-    if (auto search = reaction_list.find(name); search != reaction_list.end())
-    {
-        auto reaction = search->second;
-        return reaction.stock;
-    }
-    std::cerr << "Element not found: " << name << "\n";
-    return 0;
-}
-
-void pop_stock(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, int amount)
-{
-    reaction_list[name].stock -= amount;
-    // if (auto search = reaction_list.find(name); search != reaction_list.end())
-    //     search->second.stock -= amount;
-    // else
-    //     std::cerr << "Element not found: " << name << "\n";
-}
-
-void add_stock(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, int amount)
-{
-    reaction_list[name].stock += amount;
-    // if (auto search = reaction_list.find(name); search != reaction_list.end())
-    //     search->second.stock += amount;
-    // else
-    //     std::cerr << "Element not found: " << name << "\n";
-}
-
-int produce(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name)
-{
-    int count = 0;
+    // std::cout << "1";
+    long count = 0;
 
     auto &reaction = reaction_list[name];
     
@@ -61,42 +31,50 @@ int produce(std::unordered_map<std::string, Reaction> &reaction_list, const std:
     {
         if (i.name.compare("ORE") == 0)
         {
-            count += i.amount;
+            count += i.amount * n;
             continue;
         }
-        while (get_stock(reaction_list, i.name) < i.amount)
+        while (reaction_list[i.name].stock < i.amount * n)
         {
-            count += produce(reaction_list, i.name);
+            long missing = fmax((i.amount * n -reaction_list[i.name].stock) / reaction_list[i.name].result.amount, 1);
+            count += produce(reaction_list, i.name, missing);
         }
-        pop_stock(reaction_list, i.name, i.amount);
+        reaction_list[i.name].stock -= i.amount * n;
     }
-    add_stock(reaction_list, name, reaction.result.amount);
+    reaction_list[name].stock += reaction.result.amount * n;
 
     return count;
 }
 
-void part1(std::unordered_map<std::string, Reaction> &reaction_list)
+void part1(std::unordered_map<std::string, Reaction> reaction_list)
 {
     // Result 337862
-    int ores = produce(reaction_list, "FUEL");
+    long ores = produce(reaction_list, "FUEL", 1);
     std::cout << "Ores needed: " << ores << "\n";
 }
 
-void part2(std::unordered_map<std::string, Reaction> &reaction_list)
+void part2(std::unordered_map<std::string, Reaction> reaction_list)
 {
-    // takes forever
-    long ores = 1000000000000;
-    int fuel = 0;
-    while (ores > 0)
-    {
-        ores -= produce(reaction_list, "FUEL");
-        fuel++;
-        if (fuel % 1000 == 0)
-            std::cout << ores << "\n";
-    }
-    fuel -= 1;
 
-    std::cout << "Produced Amount of Fuel: " << fuel << "\n";
+    std::unordered_map<std::string, Reaction> copy = reaction_list;
+    
+    // std::cout << INT_MAX << "\n";
+    std::cout << produce(copy, "FUEL", 10000000000) << "\n";
+    
+
+    // // takes forever
+    // long long ores = 1000000000000;
+    // int fuel = 0;
+    // while (ores > 0)
+    // {
+    //     ores -= produce(reaction_list, "FUEL", 1);
+    //     fuel++;
+    //     if (fuel % 1000 == 0)
+    //         std::cout << ores << "\n";
+    // }
+    // fuel -= 1;
+
+    // std::cout << "Produced Amount of Fuel: " << fuel << "\n";
 }
 
 int main()
