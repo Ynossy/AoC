@@ -95,8 +95,8 @@ void part2(std::unordered_map<std::string, Reaction> reaction_list, int64_t p1)
 
 int main()
 {
-    std::ifstream inputFile("../../14/input.txt");
-    // std::ifstream inputFile("../../14/example.txt");
+    std::ifstream inputFile("../14/input.txt");
+    // std::ifstream inputFile("../14/example.txt");
 
     // input container
     std::unordered_map<std::string, Reaction> reaction_list;
