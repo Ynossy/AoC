@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <math.h>
 
 typedef struct Ingredient
 {
@@ -19,14 +18,12 @@ typedef struct Reaction
     std::vector<Ingredient> ingredients;
 } Reaction;
 
-
 int64_t produce(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, int64_t n)
 {
-    // std::cout << "1";
     int64_t count = 0;
 
     auto &reaction = reaction_list[name];
-    
+
     for (auto &i : reaction.ingredients)
     {
         if (i.name.compare("ORE") == 0)
@@ -36,7 +33,7 @@ int64_t produce(std::unordered_map<std::string, Reaction> &reaction_list, const 
         }
         while (reaction_list[i.name].stock < i.amount * n)
         {
-            int64_t missing = fmax((i.amount * n -reaction_list[i.name].stock) / reaction_list[i.name].result.amount, 1);
+            int64_t missing = fmax((i.amount * n - reaction_list[i.name].stock) / reaction_list[i.name].result.amount, 1);
             count += produce(reaction_list, i.name, missing);
         }
         reaction_list[i.name].stock -= i.amount * n;
@@ -46,41 +43,60 @@ int64_t produce(std::unordered_map<std::string, Reaction> &reaction_list, const 
     return count;
 }
 
-void part1(std::unordered_map<std::string, Reaction> reaction_list)
+int64_t part1(std::unordered_map<std::string, Reaction> reaction_list)
 {
     // Result 337862
     int64_t ores = produce(reaction_list, "FUEL", 1);
     std::cout << "Ores needed: " << ores << "\n";
+    return ores;
 }
 
-void part2(std::unordered_map<std::string, Reaction> reaction_list)
+void part2(std::unordered_map<std::string, Reaction> reaction_list, int64_t p1)
 {
+    /** binary search, since its SUPER inefficient to call produce() for a single fuel mutiple times
+     *  3687785 too low
+     *  3687786 right
+     */
 
-    std::unordered_map<std::string, Reaction> copy = reaction_list;
-    
-    // std::cout << INT_MAX << "\n";
-    std::cout << produce(copy, "FUEL", 10000000000) << "\n";
-    
+    int64_t goal = 1000000000000;
+    int64_t l = goal/p1;
+    int64_t r = l*100;
+    for (int i = 0; i < 200; i++)
+    {
+        std::unordered_map<std::string, Reaction> copy_l = reaction_list;
+        int64_t mid = produce(copy_l, "FUEL", (l + r) / 2);
+        std::cout << (l + r) / 2 << " " << mid << "\n";
 
-    // // takes forever
-    // int64_t ores = 1000000000000;
-    // int fuel = 0;
-    // while (ores > 0)
-    // {
-    //     ores -= produce(reaction_list, "FUEL", 1);
-    //     fuel++;
-    //     if (fuel % 1000 == 0)
-    //         std::cout << ores << "\n";
-    // }
-    // fuel -= 1;
+        if (mid > goal)
+        {
+            r = (l + r) / 2;
+        }
+        else if (mid < goal)
+        {
+            l = (l + r) / 2;
+        }
 
-    // std::cout << "Produced Amount of Fuel: " << fuel << "\n";
+        if (r - l <= 1)
+            break;
+        // std::cout << l << " " << r << "\n";
+    }
+    while (true)
+    {
+        std::unordered_map<std::string, Reaction> copy = reaction_list;
+        int64_t mid = produce(copy, "FUEL", r--);
+        // std::cout << mid << "\n";
+        if (mid < goal)
+            break;
+    }
+
+    // why +1?
+    std::cout << "Produced Amount of Fuel: " << r+1 << "\n";
 }
 
 int main()
 {
-    std::ifstream inputFile("../14/input.txt");
-    // std::ifstream inputFile("../14/example.txt");
+    std::ifstream inputFile("../../14/input.txt");
+    // std::ifstream inputFile("../../14/example.txt");
 
     // input container
     std::unordered_map<std::string, Reaction> reaction_list;
@@ -120,8 +136,8 @@ int main()
     }
     inputFile.close();
 
-    part1(reaction_list);
-    part2(reaction_list);
+    int64_t p1 = part1(reaction_list);
+    part2(reaction_list, p1);
 
     return 0;
 }
