@@ -13,6 +13,7 @@ typedef struct Ingredient
 
 typedef struct Reaction
 {
+    int stock = 0;
     Ingredient result;
     std::vector<Ingredient> ingredients;
 } Reaction;
@@ -20,38 +21,73 @@ typedef struct Reaction
 /**
  * TODO: Need to keep track of overproduced ores
  */
-double get_ore_count(const std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name)
+
+int get_stock(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name)
 {
-    if(name.compare("ORE") == 0){
-        return 1;
+    if (auto search = reaction_list.find(name); search != reaction_list.end())
+    {
+        auto reaction = search->second;
+        return reaction.stock;
     }
-    double count = 0;
+    std::cerr << "Element not found: " << name << "\n";
+    return 0;
+}
+
+void pop_stock(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, int amount)
+{
+    if (auto search = reaction_list.find(name); search != reaction_list.end())
+        search->second.stock -= amount;
+    else
+        std::cerr << "Element not found: " << name << "\n";
+}
+
+void add_stock(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name, int amount)
+{
+    if (auto search = reaction_list.find(name); search != reaction_list.end())
+        search->second.stock += amount;
+    else
+        std::cerr << "Element not found: " << name << "\n";
+}
+
+int produce(std::unordered_map<std::string, Reaction> &reaction_list, const std::string &name)
+{
+    int count = 0;
     if (auto search = reaction_list.find(name); search != reaction_list.end())
     {
         auto reaction = search->second;
         for (auto i : reaction.ingredients)
         {
-            count += i.amount * get_ore_count(reaction_list, i.name) / static_cast<double>(reaction.result.amount);
+            if (i.name.compare("ORE") == 0)
+            {
+                count += i.amount;
+                continue;
+            }
+            while (get_stock(reaction_list, i.name) < i.amount)
+            {
+                count += produce(reaction_list, i.name);
+            }
+            pop_stock(reaction_list, i.name, i.amount);
         }
+        add_stock(reaction_list, name, reaction.result.amount);
     }
     else
     {
         std::cerr << "Element not found: " << name << "\n";
     }
-
     return count;
 }
 
 void part1(std::unordered_map<std::string, Reaction> &reaction_list)
 {
-    int ores = get_ore_count(reaction_list, "FUEL");
+    // Result 337862
+    int ores = produce(reaction_list, "FUEL");
     std::cout << "Ores needed: " << ores << "\n";
 }
 
 int main()
 {
-    // std::ifstream inputFile("../14/input.txt");
-    std::ifstream inputFile("../14/example_small.txt");
+    std::ifstream inputFile("../14/input.txt");
+    // std::ifstream inputFile("../14/example.txt");
 
     // input container
     std::unordered_map<std::string, Reaction> reaction_list;
