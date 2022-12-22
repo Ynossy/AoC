@@ -1,33 +1,56 @@
+idx = {"ore": 0, "clay": 1, "obsidian": 2, "geode": 3}
 
-def simulate(blueprint, t):
-    res = [0, 0 ,0, 0] # ore clay obsidian
-    robots = [1, 0, 0, 0] #ore clay obs geode
-    for i in range(t):
-        new_robots = [0,0,0,0]
-        if res[2] >= blueprint[5] and res[0] >= blueprint[4]:
-            new_robots[3] += 1
-            res[3] -= blueprint[5]
-            res[0] -= blueprint[4]
-        if res[1] >= blueprint[3] and res[0] >= blueprint[2]:
-            new_robots[2] += 1
-            res[2] -= blueprint[3]
-            res[0] -= blueprint[2]
-        if res[0] >= blueprint[1]:
-            new_robots[1] += 1
-            res[0] -= blueprint[1]
-        if res[0] >= blueprint[0]:
-            new_robots[0] += 1
-            res[0] -= blueprint[0]
-        
-        res = [res[i]+robots[i] for i in range(4)]
-        robots = [new_robots[i]+robots[i] for i in range(4)]
-        print(robots, res)
-        
 
+def search(bp, robots, res, t, next_robot):
+    if t <= 0:
+        return res[idx["geode"]]
+    next_states = []
+    print(robots)
+
+    for nr in idx.keys():
+        if nr in ["ore", "clay"] and robots[idx[nr]]>4:
+            continue
+        robots_p1 = robots.copy()
+        robots_p1[idx[next_robot]] += 1
+        if nr == "ore":
+            dt = max(
+                1,
+                (bp[0] - res[idx["ore"]] + robots[idx["ore"]] - 1)
+                // robots[idx["ore"]],
+            )
+        elif nr == "clay":
+            dt = max(
+                1,
+                (bp[1] - res[idx["ore"]] + robots[idx["ore"]] - 1)
+                // robots[idx["ore"]],
+            )
+        elif nr == "obsidian" and robots[idx["clay"]]>0:
+            dt = max(
+                1,
+                (bp[2] - res[idx["ore"]] + robots[idx["ore"]] - 1)
+                // robots[idx["ore"]],
+                (bp[3] - res[idx["clay"]] + robots[idx["clay"]] - 1)
+                // robots[idx["clay"]],
+            )
+        elif nr == "geode" and robots[idx["obsidian"]]>0:
+            dt = max(
+                1,
+                (bp[4] - res[idx["ore"]] + robots[idx["ore"]] - 1)
+                // robots[idx["ore"]],
+                (bp[5] - res[idx["obsidian"]] + robots[idx["obsidian"]] - 1)
+                // robots[idx["obsidian"]],
+            )
+        else:
+            dt = 1
+        print(dt)
+        res_p1 = [a + dt * b for a, b in zip(robots, res)]
+        next_states.append(search(bp, robots_p1, res_p1, t - dt, nr))
+
+    return max(next_states)
 
 
 def main():
-    with open("example.txt") as f:
+    with open("19/example.txt") as f:
         blueprints = [
             [
                 int(line.split(" ")[6]),
@@ -37,10 +60,18 @@ def main():
                 int(line.split(" ")[27]),
                 int(line.split(" ")[30]),
             ]
-            for line in f.read().strip().split("\n") # ore-robot, clay-robot, obsidian-r-ore, obsidian-r-clay, geode-r-ore, geode-r-clay
+            for line in f.read()
+            .strip()
+            .split(
+                "\n"
+            )  # ore-robot, clay-robot, obsidian-r-ore, obsidian-r-clay, geode-r-ore, geode-r-obsidian
         ]
 
-    geode = simulate(blueprints[0], 24)
+    robots = [1, 0, 0, 0]
+    res = [0, 0, 0, 0]
+    p1 = search(blueprints[0], robots, res, 24, "ore")
+    print(p1)
+
 
 if __name__ == "__main__":
     main()
