@@ -3,17 +3,12 @@ inv_digits = {4: "2", 3: "1", 2: "0", 1: "-", 0: "="}
 
 
 def dec2snafu(n):
-    i = 0
-    while 5**i < n:
-        i += 1
-    # add 222222 base 5 and parse it normally as base 5
-    n += sum([2 * 5**j for j in range(i)])
-
-    snafu = ""
-    for j in reversed(range(i)):
-        snafu += inv_digits[n // 5**j]
-        n = n % 5**j
-    return snafu
+    snafu = []
+    while n > 0:
+        n += 2  # add 2 to get rid of the -2 offset
+        snafu.insert(0, inv_digits[n % 5])
+        n = n // 5
+    return "".join(snafu)
 
 
 def main():
