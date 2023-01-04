@@ -9,34 +9,23 @@ def ceil(a):
 
 
 def search(bp, robots, res, t, next_robot):
-    # print(robots, res)
-    # assert all([x >= 0 for x in res]), res
     if t <= 0:
         return res[idx["geode"]] + t * robots[idx["geode"]]
     if next_robot == "ore":
-        # assert res[0] >= bp[0], res
         res[0] -= bp[0]
     elif next_robot == "clay":
-        # assert res[0] >= bp[1], res
         res[0] -= bp[1]
     elif next_robot == "obsidian":
-        # assert res[0] >= bp[2], res
         res[0] -= bp[2]
-        # assert res[1] >= bp[3], res
         res[1] -= bp[3]
     elif next_robot == "geode":
-        # assert res[0] >= bp[4], res
         res[0] -= bp[4]
-        # assert res[2] >= bp[5], res
         res[2] -= bp[5]
     res = [a + b for a, b in zip(res, robots)]
     next_states = []
-    # print(robots)
     for nr in ["geode", "obsidian", "clay", "ore"]:
-        if (
-            (nr == "ore" and robots[idx["ore"]] > bp[0])
-            or (nr == "clay" and robots[idx["clay"]] > bp[3])
-            # or (nr == "obsidian" and robots[idx["obsidian"]] > bp[5])
+        if (nr == "ore" and robots[idx["ore"]] > bp[0]) or (
+            nr == "clay" and robots[idx["clay"]] > bp[3]
         ):
             continue
         robots_p1 = robots.copy()
@@ -90,14 +79,15 @@ def main():
 
     robots = [1, 0, 0, 0]
     res = [0, 0, 0, 0]
+
     t0 = time.time()
     r = 0
     for i, bp in enumerate(blueprints):
         p = search(blueprints[i], robots, res, 24, None)
         r += (i + 1) * p
         print(i + 1, p)
-    print(f"Runtime: {time.time()-t0}")
     print(f"Result 1: {r}")  # Part1: 1147
+    print(f"Runtime: {time.time()-t0}")  # 4.0s
 
     t0 = time.time()
     r2 = []
@@ -105,7 +95,7 @@ def main():
         r2.append(search(blueprints[i], robots, res, 32, None))
         print(i + 1, r2[-1])
     print(f"Result 2: {r2[0]*r2[1]*r2[2]}")  # Part2: 3080
-    print(f"Runtime: {time.time()-t0}")
+    print(f"Runtime: {time.time()-t0}")  # 15.1s
 
 
 if __name__ == "__main__":
