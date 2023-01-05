@@ -1,19 +1,13 @@
 import re
 
 
-def main():
-    with open("input.txt") as f:
-        lines = f.read().split("\n")
-    instructions = re.split("(\D)", lines[-2])
-    # save map as offset from left and stripped string
-    board_map = [
-        [len(line) - len(line.lstrip()), list(line.strip())] for line in lines[:-3]
-    ]
-
+def part1(board_map, instructions):
     # facing is 0 for right (>), 1 for down (v), 2 for left (<), and 3 for up (^)
     direction = 0
     pos = [0, 0]  # line and position (without offset) in line
-
+    index_on_line = (
+        lambda i: pos[1] + board_map[pos[0]][0] - board_map[(i) % len(board_map)][0]
+    )
     for i in instructions:
         if i == "R":
             direction = (direction + 1) % 4
@@ -21,7 +15,7 @@ def main():
         elif i == "L":
             direction = (direction - 1) % 4
             continue
-        pass
+
         for _ in range(int(i)):
             if (
                 direction == 0
@@ -43,15 +37,8 @@ def main():
                 d_idx = pos[1] + board_map[pos[0]][0] - board_map[d_line_idx][0]
                 if d_idx < 0 or d_idx >= len(board_map[d_line_idx][1]):
                     i = 1
-                    while (
-                        pos[1]
-                        + board_map[pos[0]][0]
-                        - board_map[(d_line_idx - i) % len(board_map)][0]
-                        >= 0
-                    ) and (
-                        pos[1]
-                        + board_map[pos[0]][0]
-                        - board_map[(d_line_idx - i) % len(board_map)][0]
+                    while (index_on_line(d_line_idx - i) >= 0) and (
+                        index_on_line(d_line_idx - i)
                         < len(board_map[(d_line_idx - i) % len(board_map)][1])
                     ):
                         i += 1
@@ -70,15 +57,8 @@ def main():
                 d_idx = pos[1] + board_map[pos[0]][0] - board_map[d_line_idx][0]
                 if d_idx < 0 or d_idx >= len(board_map[d_line_idx][1]):
                     i = -1
-                    while (
-                        pos[1]
-                        + board_map[pos[0]][0]
-                        - board_map[(d_line_idx - i) % len(board_map)][0]
-                        >= 0
-                    ) and (
-                        pos[1]
-                        + board_map[pos[0]][0]
-                        - board_map[(d_line_idx - i) % len(board_map)][0]
+                    while (index_on_line(d_line_idx - i) >= 0) and (
+                        index_on_line(d_line_idx - i)
                         < len(board_map[(d_line_idx - i) % len(board_map)][1])
                     ):
                         i -= 1
@@ -91,8 +71,18 @@ def main():
                     pos[1] = d_idx
                 else:
                     break
+    return 1000 * (pos[0] + 1) + 4 * (pos[1] + 1 + board_map[pos[0]][0]) + direction
 
-    print(f"Result 1: {1000*(pos[0]+1)+4*(pos[1]+1 + board_map[pos[0]][0])+direction}")
+
+def main():
+    with open("input.txt") as f:
+        lines = f.read().split("\n")
+    instructions = re.split("(\D)", lines[-2])
+    # save map as offset from left and stripped string
+    board_map = [
+        [len(line) - len(line.lstrip()), list(line.strip())] for line in lines[:-3]
+    ]
+    print(f"Result 1: {part1(board_map, instructions)}")
     # 153056 too high, 133044 too high
     # 26356 too low
     # 26556
