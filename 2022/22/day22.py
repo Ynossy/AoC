@@ -73,6 +73,13 @@ def part1(board_map, instructions):
                     break
     return 1000 * (pos[0] + 1) + 4 * (pos[1] + 1 + board_map[pos[0]][0]) + direction
 
+def part2(board_map, instructions):
+    # facing is 0 for right (>), 1 for down (v), 2 for left (<), and 3 for up (^)
+    direction = 0
+    pos = [0, 0]  # line and position (without offset) in line
+    for i in instructions:
+        pass
+    return 1000 * (pos[0] + 1) + 4 * (pos[1] + 1 + board_map[pos[0]][0]) + direction
 
 def main():
     with open("input.txt") as f:
@@ -87,6 +94,7 @@ def main():
     # 26356 too low
     # 26556
     # 26558 right
+    print(f"Result 2: {part2(board_map, instructions)}")
 
 
 if __name__ == "__main__":
