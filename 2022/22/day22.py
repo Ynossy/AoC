@@ -73,28 +73,51 @@ def part1(board_map, instructions):
                     break
     return 1000 * (pos[0] + 1) + 4 * (pos[1] + 1 + board_map[pos[0]][0]) + direction
 
-def part2(board_map, instructions):
+
+def part2(raw_board, instructions, width):
     # facing is 0 for right (>), 1 for down (v), 2 for left (<), and 3 for up (^)
     direction = 0
     pos = [0, 0]  # line and position (without offset) in line
+
+    # build cube rotations and connected faces (i.e. rotation matrix for every side and rotate direction vectors on wrapover)
+    cube_side = 50
+    grid_x = len(raw_board) // cube_side
+    grid_y = width // cube_side
+    sides = [[None for i in range(grid_y)] for i in range(grid_x)]
+
+    # separate faces
+    for i in range(len(raw_board) // cube_side):
+        for j in range(len(raw_board[i * cube_side]) // cube_side):
+            sides[i][j] = [
+                line[j * cube_side : (j + 1) * cube_side]
+                for line in raw_board[i * cube_side : (i + 1) * cube_side]
+            ]
+            if sides[i][j][0].isspace():
+                sides[i][j] = None
+    print(sides)
+
     for i in instructions:
         pass
-    return 1000 * (pos[0] + 1) + 4 * (pos[1] + 1 + board_map[pos[0]][0]) + direction
+    return 1000 * (pos[0] + 1) + 4 * (
+        pos[1] + 1
+    )  # ? + board_map[pos[0]][0]) + direction
+
 
 def main():
-    with open("input.txt") as f:
+    with open("22/input.txt") as f:
         lines = f.read().split("\n")
     instructions = re.split("(\D)", lines[-2])
     # save map as offset from left and stripped string
+    width = max([len(l) for l in lines[:-3]])
     board_map = [
         [len(line) - len(line.lstrip()), list(line.strip())] for line in lines[:-3]
     ]
-    print(f"Result 1: {part1(board_map, instructions)}")
+    # print(f"Result 1: {part1(board_map, instructions)}")
     # 153056 too high, 133044 too high
     # 26356 too low
     # 26556
     # 26558 right
-    print(f"Result 2: {part2(board_map, instructions)}")
+    print(f"Result 2: {part2(lines[:-3], instructions, width)}")
 
 
 if __name__ == "__main__":
