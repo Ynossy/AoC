@@ -43,17 +43,43 @@ def part1(data: list[str]):
                     abc=0
                 if has_symbol(data, y, start_idx, x):
                     result += int(line[start_idx : x + 1])
-                    print(f"\033[31m{line[start_idx : x + 1]}\033[0m", end="")
-                else:
-                    print(f"\033[32m{line[start_idx : x + 1]}\033[0m", end="")
-            elif(not line[x].isnumeric()):
-                print(line[x], end="")
-        print("")
+            #         print(f"\033[31m{line[start_idx : x + 1]}\033[0m", end="")
+            #     else:
+            #         print(f"\033[32m{line[start_idx : x + 1]}\033[0m", end="")
+            # elif(not line[x].isnumeric()):
+            #     print(line[x], end="")
+        # print("")
     return result
+
+def get_gear_ratio(data, y, x):
+    numbers = []
+    # left 
+    if(x!= 0 and data[y][x-1].isnumeric()):
+        start_idx = x-1
+        while start_idx>=0 and data[y][start_idx].isnumeric(): start_idx-=1
+        numbers.append(int(data[y][start_idx+1:x]))
+    
+    # right
+    if(x!= len(data[y])-1 and data[y][x+1].isnumeric()):
+        end_idx = x+1
+        while end_idx < len(data[y])-1 and data[y][end_idx].isnumeric(): end_idx+=1
+        numbers.append(int(data[y][x+1:end_idx]))
+
+    # top
+    # if(y!=0 and )
+    # WIP
+
 
 
 def part2(data: list[str]):
-    return 0
+    result = 0
+    max_y = len(data)
+    max_x = len(data[0])
+    for y in range(max_y):
+        for x in range(max_x):
+            if(data[y][x]=='*'):
+                result += get_gear_ratio(data, y, x)
+    return result
 
 
 if __name__ == "__main__":
