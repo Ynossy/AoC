@@ -1,5 +1,4 @@
 import numpy as np
-from tqdm import tqdm
 
 
 def convert(idx, mapping):
@@ -23,30 +22,25 @@ def part1(seeds, maps):
 def convert_range(idx_range, mapping):
     mapping.sort(key=lambda x: x[1])
     mapped_ranges = []
-    for r_map in mapping:
-        if (
-            idx_range[0] + idx_range[1] <= r_map[1]
-            or r_map[1] + r_map[2] <= idx_range[0]
-        ):
+    for dest, src, map_len in mapping:
+        if idx_range[0] + idx_range[1] <= src or src + map_len <= idx_range[0]:
             # no overlap
             continue
 
-        if idx_range[0] < r_map[1]:
+        if idx_range[0] < src:
             # split in 1:1 mapped and rest
-            cutoff = r_map[1] - idx_range[0]
+            cutoff = src - idx_range[0]
             mapped_ranges.append([idx_range[0], cutoff])
-            idx_range = [r_map[1], idx_range[1] - cutoff]
+            idx_range = [src, idx_range[1] - cutoff]
 
-        if r_map[1] + r_map[2] < idx_range[0] + idx_range[1]:
+        if src + map_len < idx_range[0] + idx_range[1]:
             # append mapped first part, continue with remaining
-            cutoff = r_map[1] + r_map[2]
-            mapped_ranges.append(
-                [r_map[0] + idx_range[0] - r_map[1], cutoff - idx_range[0]]
-            )
+            cutoff = src + map_len
+            mapped_ranges.append([dest + idx_range[0] - src, cutoff - idx_range[0]])
             idx_range = [cutoff, idx_range[0] + idx_range[1] - cutoff]
         else:
             # append all --> done
-            mapped_ranges.append([r_map[0] + idx_range[0] - r_map[1], idx_range[1]])
+            mapped_ranges.append([dest + idx_range[0] - src, idx_range[1]])
             return mapped_ranges
 
     mapped_ranges.append(idx_range)
@@ -71,19 +65,10 @@ def part2(seeds, maps):
 
 if __name__ == "__main__":
     with open("input.txt") as f:
-        data = f.read().strip().split("\n")
+        data = f.read().strip().split("\n\n")
 
     seeds = [int(i) for i in data[0].split(": ")[1].split(" ")]
-    maps = [[] for _ in range(7)]
-
-    map_idx = 0
-    data_idx = 3
-    while data_idx < len(data):
-        if data[data_idx] == "":
-            map_idx += 1
-            data_idx += 2
-            continue
-        maps[map_idx].append([int(i) for i in data[data_idx].split(" ")])
-        data_idx += 1
+    maps = [[[int(o) for o in n.split(" ")] for n in m.split("\n")[1:]] for m in data[1:]]
+    
     print(f"Part1: {part1(seeds, maps)}")  # 111627841
-    print(f"Part2: {part2(seeds, maps)}")  # 40484395 too low, reddit correct: 69323688
+    print(f"Part2: {part2(seeds, maps)}")  # 40484395 too low, 69323688
