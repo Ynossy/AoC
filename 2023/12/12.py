@@ -19,12 +19,7 @@ def place_springs(m: str, groups: list[int]):
 
 
 def part1(data: list[list[str]]):
-    combinations = 0
-    for m, group in data:
-        c = place_springs(m, group)
-        print(c)
-        combinations += c
-    return combinations
+    return sum(place_springs(m, group) for m, group in data)
 
 
 def part2(data: list[list[str]]):
