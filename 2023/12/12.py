@@ -5,11 +5,12 @@ def place_springs(m: str, groups: list[int]):
         return "#" not in m
     combinations = 0
     g_len = groups[0]
-    qs = [i for i,c in enumerate(m) if c=='?']
-    first_spring = m.find("#") # todo spring appears before first '?'
-    if not qs and m.count("#") != sum(groups):
-        return 0
-    if not qs or first_spring < qs[0] and m[first_spring:first_spring+g_len].find('.') == -1:
+    first_spring = m.find("#")
+    qs = [i for i,c in enumerate(m) if c=='?' and i < first_spring]
+    if(first_spring != -1): 
+        qs.append(first_spring)
+    assert qs
+    if first_spring <= qs[0] and m[first_spring:first_spring+g_len].find('.') == -1:
         return 1
     for q in qs:
         if(q+g_len > len(m)):
