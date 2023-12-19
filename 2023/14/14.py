@@ -32,28 +32,29 @@ def part2(data: list[str], stones):
     pattern = []
     search_idx = 0
     search_start = 0
-    for i in range(6000):
-        stones = tilt_platform(data, stones, moves[i%len(moves)])
+    for i in range(7700):
+        stones = tilt_platform(data, stones, moves[i % len(moves)])
         score = sum(len(data) - y for y, _ in stones)
-        if i== 500:
+        if i == 500:
             pattern = []
-            print("Reset: ", i)
-        if len(pattern) <100:
+        if len(pattern) < 100:
             pattern.append(score)
             search_idx = 0
             search_start = i
         else:
-            if(search_idx < 100 and pattern[search_idx] == score):
+            if search_idx < 100 and pattern[search_idx] == score:
                 search_idx += 1
             else:
                 search_idx == 0
-            if(search_idx == 100):
+            if search_idx == 100:
                 # search_idx = 0
                 search_idx = 101
-                period = i-search_start
+                period = i - search_start
                 print("Period: ", period)
-                # break
-    print(pattern[(6000-1-search_start-1-4)%period]) # some offset is happening
+                break
+    print(
+        pattern[(1000000000 - 1 - search_start - len(pattern) + 2) % period]
+    )  # some offset is happening
     return sum(len(data) - y for y, _ in stones)
 
 
@@ -67,4 +68,4 @@ if __name__ == "__main__":
         if data[i][j] == "O"
     ]
     print(f"Part1: {part1(copy.deepcopy(data), stones)}")  # 111979
-    print(f"Part2: {part2(copy.deepcopy(data), stones)}")  # 110859 too high
+    print(f"Part2: {part2(copy.deepcopy(data), stones)}")  # 110859 too high, 103016 too high
