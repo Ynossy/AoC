@@ -31,35 +31,23 @@ def part2(data: list[str], stones):
     moves = ["N", "W", "S", "E"]
     pattern = []
     search_idx = 0
-    search_start = 0
-    for i in range(7700):
+    search_start = 500
+    tries = 1000000000 * 4  # cycles
+    for i in range(tries):
         stones = tilt_platform(data, stones, moves[i % len(moves)])
         score = sum(len(data) - y for y, _ in stones)
-        if i == 500:
-            pattern = []
-        if len(pattern) < 100:
-            pattern.append(score)
-            search_idx = 0
-            search_start = i
-        else:
-            if search_idx < 100 and pattern[search_idx] == score:
-                search_idx += 1
-            else:
-                search_idx == 0
+        if i >= search_start:
+            if len(pattern) < 200:
+                pattern.append(score)
+            search_idx += len(pattern) > 2 and pattern[search_idx] == score
             if search_idx == 100:
-                # search_idx = 0
-                search_idx = 101
-                period = i - search_start
-                print("Period: ", period)
+                period = i - search_start - 100 + 1
                 break
-    print(
-        pattern[(1000000000 - 1 - search_start - len(pattern) + 2) % period]
-    )  # some offset is happening
-    return sum(len(data) - y for y, _ in stones)
+    return pattern[(tries - 1 - search_start) % period]
 
 
 if __name__ == "__main__":
-    with open("example.txt") as f:
+    with open("input.txt") as f:
         data = [list(s) for s in f.read().strip().split("\n")]
     stones = [
         [i, j]
@@ -68,4 +56,6 @@ if __name__ == "__main__":
         if data[i][j] == "O"
     ]
     print(f"Part1: {part1(copy.deepcopy(data), stones)}")  # 111979
-    print(f"Part2: {part2(copy.deepcopy(data), stones)}")  # 110859 too high, 103016 too high
+    print(
+        f"Part2: {part2(copy.deepcopy(data), stones)}"
+    )  # 110859 too high, 103016 too high, 102055 right
