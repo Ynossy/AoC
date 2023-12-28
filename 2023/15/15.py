@@ -7,27 +7,21 @@ def part1(data: str):
 
 
 def part2(data: str):
-    boxes = {i: [] for i in range(256)}
+    boxes = {i: {} for i in range(256)}  # dicts keep order
     for instruction in data.split(","):
         op = "=" if "=" in instruction else "-"
         label, focal = instruction.split(op)
         idx = hash(label)
-        if "=" in instruction:
-            for e in boxes[idx]:
-                if e[0] == label:
-                    e[1] = focal
-                    break
-            else:
-                boxes[idx].append([label, focal])
-        elif "-" in instruction:
-            for e in boxes[idx]:
-                if e[0] == label:
-                    boxes[idx].remove(e)
-
+        if op == "=":
+            boxes[idx][label] = focal
         else:
-            print("invalid instruction: ", instruction)
-
-    return sum((i+1)*(n+1)*int(b[1]) for i in range(256) for n,b in enumerate(boxes[i]))
+            if label in boxes[idx]:
+                del boxes[idx][label]
+    return sum(
+        (i + 1) * (n + 1) * int(b)
+        for i in range(256)
+        for n, b in enumerate(boxes[i].values())
+    )
 
 
 if __name__ == "__main__":
