@@ -5,6 +5,7 @@ directions = {"U": [-1, 0], "R": [0, 1], "D": [1, 0], "L": [0, -1]}
 offset = {"U": "R", "R": "D", "D": "L", "L": "U"}
 
 
+# shoelace formula
 def get_area(trench):
     area = 0
     for i in range(len(trench)):
