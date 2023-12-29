@@ -26,6 +26,27 @@ def parse_workflow(line: str):
     else:
         print(f"invalid operator: {op}")
         return None
+    
+def parse_workflow2(line: str):
+    sep = line.find(",")
+    if sep == -1:
+        return lambda xmas: line
+    cond, cond_true = line[:sep].split(":")
+    cond_false = line[sep+1:]
+    # if ">" in cond:
+    #     var, n = cond.split(">")
+    #     def f(xmas):
+    #         return cond_true if xmas[var]>int(n) else parse_workflow(cond_false)(xmas)
+    #     return f
+    # elif "<" in cond:
+    #     var, n = cond.split("<")
+    #     op = "<"
+    #     def f(xmas):
+    #         return cond_true if xmas[var]<int(n) else parse_workflow(cond_false)(xmas)
+    #     return f
+    # else:
+    #     print(f"invalid operator: {op}")
+    #     return None
 
 
 def part1(workflows, ratings):
@@ -39,15 +60,18 @@ def part1(workflows, ratings):
     return accepted
 
 
-def part2(workflows, ratings):
+def part2(workflows):
+    # ranges = {"x":[[1,4000]], "m":[[1,4000]], "a":[[1,4000]], "s":[[1,4000]]}
+    # accepted = workflows["in"](ranges)
+    # print(accepted)
     return 0
 
 
 if __name__ == "__main__":
-    with open("input.txt") as f:
+    with open("example.txt") as f:
         data = f.read().strip().split("\n\n")
     workflows = {
-        x.split("{")[0]: parse_workflow(x.split("{")[1][:-1])
+        x.split("{")[0]: parse_workflow2(x.split("{")[1][:-1])
         for x in data[0].split("\n")
     }
     ratings = [parse_ratings(s) for s in data[1].split("\n")]
