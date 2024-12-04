@@ -37,8 +37,33 @@ def findXmas(grid, direction):
     return count
 
 
+rot1 = [[1, 1], [-1, 1], [-1, -1], [1, -1]]
+rot2 = [[1, -1], [1, 1], [-1, 1], [-1, -1]]
+rot3 = [[-1, -1], [1, -1], [1, 1], [-1, 1]]
+rot4 = [[-1, 1], [-1, -1], [1, -1], [1, 1]]
+
+def findCrossMas(grid, direction):
+    count = 0
+    len_x = len(grid)
+    len_y = len(grid[0])
+    for x in range(1, len_x - 1):
+        for y in range(1, len_y - 1):
+            if (
+                grid[x][y] == "A"
+                and grid[x + direction[0][0]][y + direction[0][1]] in "M"
+                and grid[x + direction[1][0]][y + direction[1][1]] in "M"
+                and grid[x + direction[2][0]][y + direction[2][1]] in "S"
+                and grid[x + direction[3][0]][y + direction[3][1]] in "S"
+            ):
+                count += 1
+    return count
+
+
 print(
     f"Part1:  {findXmas(grid, horizontal)+findXmas(grid, vertical)+findXmas(grid, dia1)+findXmas(grid, dia2)}"
+)
+print(
+    f"Part1:  {findCrossMas(grid, rot1)+findCrossMas(grid, rot2)+findCrossMas(grid, rot3)+findCrossMas(grid, rot4)}"
 )
 
 # %%
