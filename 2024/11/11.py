@@ -1,25 +1,38 @@
-#%%
+# %%
 
 with open("input.txt") as f:
     initial_stones = [int(x) for x in f.read().strip().split(" ")]
 
-#%%
+# %%
 
-stones = initial_stones.copy()
-for i in range(25):
-    stones_temp = []
+stones = {x: 1 for x in initial_stones}
+stones_temp = {}
+
+
+def insertStone(stone, amount):
+    if stone in stones_temp:
+        stones_temp[stone] = stones_temp[stone] + amount
+    else:
+        stones_temp[stone] = amount
+
+
+for i in range(75):
+    stones_temp = {}
     for s in stones:
         if s == 0:
-            stones_temp.append(1)
+            insertStone(1, stones[s])
         else:
             s_str = str(s)
-            if len(s_str)%2 == 0:
-                stones_temp.append(int(s_str[len(s_str)//2:]))
-                stones_temp.append(int(s_str[:len(s_str)//2]))
+            if len(s_str) % 2 == 0:
+                insertStone(int(s_str[len(s_str) // 2 :]), stones[s])
+                insertStone(int(s_str[: len(s_str) // 2]), stones[s])
             else:
-                stones_temp.append(s*2024)
-    stones = stones_temp
-    print(f"{i}-{len(stones)}")
-            
+                insertStone(s * 2024, stones[s])
+    stones = stones_temp.copy()
+    if i == 24:
+        print(f"Part 1: {sum(stones[x] for x in stones)}")
+    elif i == 74:
+        print(f"Part 2: {sum(stones[x] for x in stones)}")
+
 
 # %%
