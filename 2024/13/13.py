@@ -13,15 +13,22 @@ with open("input.txt") as f:
 # %%
 import numpy as np
 
-buttons = []
-for m in machines:
-    matrix = np.array([m[0], m[1]])
-    buttonA, buttonB = m[2] @ np.linalg.inv(matrix)
-    if (0.0001 > buttonA % 1 or 0.9999 < buttonA % 1) and (
-        0.0001 > buttonB % 1 or 0.9999 < buttonB % 1
-    ):
-        buttons.append(3 * round(buttonA) + round(buttonB))
-    print(buttonA, buttonB)
-print(f"Part 1: {sum(buttons)}")
 
+def runTask(part2=False):
+    buttons = []
+    for m in machines:
+        matrix = np.array([m[0], m[1]])
+        b = 10000000000000 + np.array(m[2]) if part2 else np.array(m[2])
+        buttonA, buttonB = b @ np.linalg.inv(matrix)
+
+        if (
+            round(buttonA) * m[0][0] + round(buttonB) * m[1][0] == b[0]
+            and round(buttonA) * m[0][1] + round(buttonB) * m[1][1] == b[1]
+        ):
+            buttons.append(3 * round(buttonA) + round(buttonB))
+    return sum(buttons)
+
+
+print(f"Part 1: {runTask()}")
+print(f"Part 2: {runTask(True)}")
 # %%
