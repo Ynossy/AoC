@@ -40,41 +40,37 @@ findLengths(dFromStart, s)
 findLengths(dFromEnd, e)
 
 nominal_length = dFromStart[e[0]][e[1]]
-print(f"Nominal path length: {nominal_length}")
 
-shortcuts = [  # possible endpoints for cheating
-    (2, 0, 1),
-    (-2, 0, 1),
-    (0, 2, 1),
-    (0, -2, 1),
-    (1, 1, 2),
-    (1, -1, 2),
-    (-1, -1, 2),
-    (-1, 1 - 2),
-]
 
-res = 0
-cheats = {}
-for x in range(len(dFromStart)):
-    for y in range(len(dFromStart[0])):
-        for cheat in shortcuts:
-            nx = x + cheat[0]
-            ny = y + cheat[1]
-            if not (
-                0 <= nx < len(dFromStart)
-                and 0 <= ny < len(dFromStart[0])
-                and dFromEnd[nx][ny] != -1
-                and dFromStart[x][y] != -1
-            ):
+def countShortcuts(pico):
+    shortcuts = [
+        (i, j)
+        for i in range(-pico, pico + 1)
+        for j in range(-pico, pico + 1)
+        if abs(i) + abs(j) <= pico
+    ]
+    res = 0
+    for x in range(len(dFromStart)):
+        for y in range(len(dFromStart[0])):
+            if nominal_length - dFromStart[x][y] <= 100 or dFromStart[x][y] == -1:
                 continue
+            for cheat in shortcuts:
+                nx = x + cheat[0]
+                ny = y + cheat[1]
+                if not (
+                    0 <= nx < len(dFromStart)
+                    and 0 <= ny < len(dFromStart[0])
+                    and dFromEnd[nx][ny] != -1
+                ):
+                    continue
 
-            cheat_advantage = nominal_length - (dFromStart[x][y] + dFromEnd[nx][ny] + 2)
-            if cheat_advantage > 0:
-                if cheat_advantage in cheats:
-                    cheats[cheat_advantage] += cheat[2]
-                else:
-                    cheats[cheat_advantage] = cheat[2]
-            if cheat_advantage >= 100:
-                res += 1
+                cheat_advantage = nominal_length - (
+                    dFromStart[x][y] + dFromEnd[nx][ny] + abs(cheat[0]) + abs(cheat[1])
+                )
+                if cheat_advantage >= 100:
+                    res += 1
+    return res
 
-print(f"Part 1: {res}")
+
+print(f"Part 1: {countShortcuts(2)}")
+print(f"Part 2: {countShortcuts(20)}")
