@@ -25,3 +25,35 @@ for pc1 in connections:
                 triplets.append([pc1, pc2, pc3])
 
 print(f"Part 1: {len(triplets)//6}")
+
+# %%
+max_set = set()
+
+
+# thanks wikipedia https://en.wikipedia.org/wiki/Bron%E2%80%93Kerbosch_algorithm
+def bronKerbosch(R, P, X):
+    global max_set
+    if not P and not X:
+        if len(R) > len(max_set):
+            max_set = R
+    for v in P:
+        bronKerbosch(
+            R.union(set([v])),
+            P.intersection(connections[v]),
+            X.intersection(connections[v]),
+        )
+        P = P.difference(set([v]))
+        X = X.union(set([v]))
+
+
+R = set()
+P = set(connections.keys())
+X = set()
+
+bronKerbosch(R, P, X)
+password = list(max_set)
+password.sort()
+password = ",".join(password)
+print(f"Part 2: {password}")
+
+# %%
