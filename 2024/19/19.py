@@ -17,6 +17,7 @@ class TreeNode:
         return f"leaf: {self.leaf}, children: {self.children}"
 
 
+# build a tree structure fofr pattern lookup
 patternTree = TreeNode(False)
 
 
@@ -33,24 +34,21 @@ def insertPattern(node: TreeNode, pattern):
 
 
 def checkDesign(design, idx, cache):
-    if cache[idx] == 1:
-        return True
-    if cache[idx] == 2:
-        return False
+    if cache[idx] != -1:
+        return cache[idx]
+    else:
+        cache[idx] = 0
     node = patternTree
     i = idx
     while i < len(design) and design[i] in node.children:
         if node.children[design[i]].leaf:
             if i == len(design) - 1:
-                cache[idx] = 1
-                return True
-            elif i + 1 < len(design) and checkDesign(design, i + 1, cache):
-                cache[idx] = 1
-                return True
+                cache[idx] += 1
+            elif i + 1 < len(design):
+                cache[idx] += checkDesign(design, i + 1, cache)
         node = node.children[design[i]]
         i += 1
-    cache[idx] = 2
-    return False
+    return cache[idx]
 
 
 for pattern in patterns:
@@ -58,10 +56,13 @@ for pattern in patterns:
 
 
 res = 0
+res2 = 0
 for design in designs:
-    if checkDesign(design, 0, [0 for _ in range(len(design))]):
-        res += 1
-print(f"Part 1: {res}")
+    c = checkDesign(design, 0, [-1 for _ in range(len(design))])
+    res += c > 0
+    res2 += c
 
+print(f"Part 1: {res}")
+print(f"Part 2: {res2}")
 
 # %%
