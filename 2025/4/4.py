@@ -34,19 +34,18 @@ grid = [x.copy() for x in data]
 
 def removePaper(grid):
     removed = 0
-    for x in range(len(data)):
-        for y in range(len(data[0])):
-            if data[x][y] != "@":
+    for x in range(len(grid)):
+        for y in range(len(grid[0])):
+            if grid[x][y] != "@":
                 continue
-            if countAdjacent(data, x, y) < 4:
-                data[x][y] = "x"
+            if countAdjacent(grid, x, y) < 4:
+                grid[x][y] = "x"
                 removed += 1
 
     return removed
 
 
 start = time.time()
-
 result = 0
 while True:
     n = removePaper(grid)
@@ -55,6 +54,5 @@ while True:
     result += n
 
 print(f"Part2: {result} Execution Time: {time.time() - start:.3f}s")  # 9280
-
 
 # %%
